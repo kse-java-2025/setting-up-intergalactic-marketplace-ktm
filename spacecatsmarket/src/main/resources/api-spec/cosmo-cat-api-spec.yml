@@ -16,7 +16,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsListDto'
+                $ref: '#/components/schemas/ProductListDto'
     post:
       summary: Create a new product
       tags:
@@ -27,14 +27,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ProductDetailsDto'
+              $ref: '#/components/schemas/ProductDto'
       responses:
         '200':
           description: Product created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsDto'
+                $ref: '#/components/schemas/ProductDto'
         '400':
           description: Invalid input
           content:
@@ -60,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProductDetailsDto'
+                $ref: '#/components/schemas/ProductDto'
         '404':
           description: Product not found
           content:
