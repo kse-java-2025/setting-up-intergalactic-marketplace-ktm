@@ -32,14 +32,14 @@ public class ProductController {
     @PostMapping
     public ResponseEntity<ProductEntry> create(@Valid @RequestBody ProductDto productDto) {
         Product toCreate = productMapper.toEntity(productDto);
-        Product created = productService.create(toCreate);
+        Product created = productService.createProduct(toCreate);
         ProductEntry body = toEntry(created.getId(), created);
         return ResponseEntity.created(URI.create("/api/v1/products/" + created.getId())).body(body);
     }
 
     @GetMapping
     public ProductListDto getAll() {
-        List<ProductEntry> entries = productService.findAll().stream()
+        List<ProductEntry> entries = productService.findAllProducts().stream()
                 .map(p -> toEntry(p.getId(), p))
                 .collect(Collectors.toList());
         return ProductListDto.builder().products(entries).build();
@@ -47,7 +47,7 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ProductEntry getById(@PathVariable Long id) {
-        Product product = productService.findById(id)
+        Product product = productService.findProductById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
         return toEntry(id, product);
     }
@@ -55,7 +55,7 @@ public class ProductController {
     @PutMapping("/{id}")
     public ProductEntry update(@PathVariable Long id, @Valid @RequestBody ProductDto productDto) {
         Product toUpdate = productMapper.toEntity(productDto);
-        Product updated = productService.update(id, toUpdate)
+        Product updated = productService.updateProduct(id, toUpdate)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
         return toEntry(id, updated);
     }
@@ -63,7 +63,7 @@ public class ProductController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) {
-        productService.delete(id);
+        productService.deleteProduct(id);
     }
 
     private ProductEntry toEntry(Long id, Product product) {

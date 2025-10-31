@@ -6,15 +6,15 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProductService {
-    Product create(Product product);
+    Product createProduct(Product product);
 
-    List<Product> findAll();
+    List<Product> findAllProducts();
 
-    Optional<Product> findById(Long id);
+    Optional<Product> findProductById(Long id);
 
-    Optional<Product> update(Long id, Product product);
+    Optional<Product> updateProduct(Long id, Product product);
 
-    boolean delete(Long id);
+    void deleteProduct(Long id);
 }
 
 

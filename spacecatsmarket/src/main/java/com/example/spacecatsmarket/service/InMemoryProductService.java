@@ -18,7 +18,7 @@ public class InMemoryProductService implements ProductService {
     private final AtomicLong idSequence = new AtomicLong(1);
 
     @Override
-    public Product create(Product product) {
+    public Product createProduct(Product product) {
         long id = idSequence.getAndIncrement();
         Product toStore = Product.builder()
                 .id(id)
@@ -32,7 +32,7 @@ public class InMemoryProductService implements ProductService {
     }
 
     @Override
-    public List<Product> findAll() {
+    public List<Product> findAllProducts() {
         List<Product> products = new ArrayList<>();
         for (Map.Entry<Long, Product> entry : idToProduct.entrySet()) {
             products.add(copy(entry.getValue()));
@@ -41,13 +41,13 @@ public class InMemoryProductService implements ProductService {
     }
 
     @Override
-    public Optional<Product> findById(Long id) {
+    public Optional<Product> findProductById(Long id) {
         Product product = idToProduct.get(id);
         return Optional.ofNullable(product == null ? null : copy(product));
     }
 
     @Override
-    public Optional<Product> update(Long id, Product product) {
+    public Optional<Product> updateProduct(Long id, Product product) {
         if (!idToProduct.containsKey(id)) {
             return Optional.empty();
         }
@@ -63,8 +63,8 @@ public class InMemoryProductService implements ProductService {
     }
 
     @Override
-    public boolean delete(Long id) {
-        return idToProduct.remove(id) != null;
+    public void deleteProduct(Long id) {
+        idToProduct.remove(id);
     }
 
     private Product copy(Product product) {
