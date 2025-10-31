@@ -1,5 +1,6 @@
 package com.example.spacecatsmarket.dto.product;
 
+import com.example.spacecatsmarket.dto.validation.CosmicWordCheck;
 import com.example.spacecatsmarket.dto.validation.ExtendedValidation;
 import jakarta.validation.GroupSequence;
 import jakarta.validation.constraints.Min;
@@ -18,6 +19,7 @@ public class ProductDto {
 
     @NotBlank(message = "Product name is mandatory")
     @Size(max = 100, message = "Product name cannot exceed 100 characters")
+    @CosmicWordCheck(groups = ExtendedValidation.class)
     String name;
 
     @Size(max = 500, message = "Description cannot exceed 500 characters")
