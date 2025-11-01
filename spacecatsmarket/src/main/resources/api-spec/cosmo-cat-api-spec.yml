@@ -17,6 +17,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProductListDto'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
     post:
       summary: Create a new product
       tags:
@@ -69,6 +75,12 @@ paths:
                 $ref: '#/components/schemas/ProductDto'
         '404':
           description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
           content:
             application/json:
               schema:
