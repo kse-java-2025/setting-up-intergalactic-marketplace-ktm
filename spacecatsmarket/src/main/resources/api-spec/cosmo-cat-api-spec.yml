@@ -1,0 +1,325 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  description: API for managing product data
+  version: 1.0.0
+
+paths:
+  /api/v1/products:
+    get:
+      summary: Get all products
+      tags:
+        - Products
+      responses:
+        '200':
+          description: List of all products
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductListDto'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    post:
+      summary: Create a new product
+      tags:
+        - Products
+      requestBody:
+        description: Product data to create a new product
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDto'
+      responses:
+        '200':
+          description: Product created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDto'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '409':
+          description: Conflict - Product already exists or duplicate resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/v1/products/{id}:
+    get:
+      summary: Get product by ID
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to retrieve
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDto'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    put:
+      summary: Update product by ID
+      description: Updates an existing product with new details.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductDto'
+      responses:
+        '200':
+          description: Product updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductDto'
+        '400':
+          description: Invalid input (validation failed)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+        '404':
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict - Resource conflict detected during update
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete product by ID
+      description: Removes a product from the marketplace.
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the product to delete
+      responses:
+        '204':
+          description: Product deleted successfully (no content)
+
+components:
+  schemas:
+    ProductDto:
+      type: object
+      required:
+        - name
+        - price
+        - categoryId
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the product
+        name:
+          type: string
+          description: Name of the product (must include cosmic terms like "star", "galaxy", "comet")
+          maxLength: 100
+        description:
+          type: string
+          description: Detailed description of the product
+          maxLength: 500
+        price:
+          type: number
+          format: float
+          description: Price of the product in intergalactic credits
+          minimum: 0.01
+        categoryId:
+          type: integer
+          description: ID of the category this product belongs to
+        stock:
+          type: integer
+          description: Quantity of product in stock
+          minimum: 0
+        createdAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was created
+        updatedAt:
+          type: string
+          format: date-time
+          description: Timestamp when the product was last updated
+
+    ProductListDto:
+      type: object
+      properties:
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductDto'
+
+    CategoryDto:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the category
+        name:
+          type: string
+          description: Name of the category (e.g., "Yarn Balls", "Cosmic Milk")
+        description:
+          type: string
+          description: Detailed description of the category
+
+    CategoryListDto:
+      type: object
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryDto'
+
+    OrderDto:
+      type: object
+      required:
+        - customerId
+        - items
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the order
+        customerId:
+          type: integer
+          description: ID of the customer placing the order
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItemDto'
+        totalPrice:
+          type: number
+          format: float
+          description: Total price of the order
+        status:
+          type: string
+          description: Status of the order (e.g., "CREATED", "PAID", "SHIPPED")
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    OrderItemDto:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: integer
+          description: ID of the product ordered
+        quantity:
+          type: integer
+          description: Number of units ordered
+          minimum: 1
+
+    OrderListDto:
+      type: object
+      properties:
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderDto'
+
+    CartDto:
+      type: object
+      required:
+        - customerId
+      properties:
+        customerId:
+          type: integer
+          description: ID of the customer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItemDto'
+
+    CartItemDto:
+      type: object
+      required:
+        - productId
+        - quantity
+      properties:
+        productId:
+          type: integer
+          description: ID of the product in the cart
+        quantity:
+          type: integer
+          description: Number of units
+          minimum: 1
+
+    ValidationError:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 400
+        error:
+          type: string
+          example: "Bad Request"
+        message:
+          type: string
+          example: "Validation failed for object 'ProductDto': Field 'price' must be greater than 0."
+        path:
+          type: string
+          example: "/api/v1/products"
+
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
