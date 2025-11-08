@@ -1,13 +1,13 @@
 package com.example.spacecatsmarket.service;
 
 import com.example.spacecatsmarket.domain.Product;
+import com.example.spacecatsmarket.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -41,15 +41,18 @@ public class InMemoryProductService implements ProductService {
     }
 
     @Override
-    public Optional<Product> findProductById(Long id) {
+    public Product findProductById(Long id) {
         Product product = idToProduct.get(id);
-        return Optional.ofNullable(product == null ? null : copy(product));
+        if (product == null) {
+            throw new ProductNotFoundException(id);
+        }
+        return copy(product);
     }
 
     @Override
-    public Optional<Product> updateProduct(Long id, Product product) {
+    public Product updateProduct(Long id, Product product) {
         if (!idToProduct.containsKey(id)) {
-            return Optional.empty();
+            throw new ProductNotFoundException(id);
         }
         Product updated = Product.builder()
                 .id(id)
@@ -59,7 +62,7 @@ public class InMemoryProductService implements ProductService {
                 .categoryId(product.getCategoryId())
                 .build();
         idToProduct.put(id, updated);
-        return Optional.of(copy(updated));
+        return copy(updated);
     }
 
     @Override

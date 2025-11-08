@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -47,16 +46,14 @@ public class ProductController {
 
     @GetMapping("/{id}")
     public ProductEntry getById(@PathVariable Long id) {
-        Product product = productService.findProductById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        Product product = productService.findProductById(id);
         return toEntry(id, product);
     }
 
     @PutMapping("/{id}")
     public ProductEntry update(@PathVariable Long id, @Valid @RequestBody ProductDto productDto) {
         Product toUpdate = productMapper.toEntity(productDto);
-        Product updated = productService.updateProduct(id, toUpdate)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        Product updated = productService.updateProduct(id, toUpdate);
         return toEntry(id, updated);
     }
 
