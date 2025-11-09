@@ -31,4 +31,15 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(body);
     }
+    @ExceptionHandler(ProductNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleProductNotFound(ProductNotFoundException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("type", "https://spacecatsmarket.com/problems/product-not-found");
+        body.put("title", "Not Found");
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("detail", ex.getMessage());
+        body.put("instance", "/api/v1/products");
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+    }
 }
