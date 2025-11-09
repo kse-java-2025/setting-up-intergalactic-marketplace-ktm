@@ -1,6 +1,7 @@
 package com.example.spacecatsmarket.service;
 
 import com.example.spacecatsmarket.domain.Product;
+import com.example.spacecatsmarket.exception.DuplicateProductNameException;
 import com.example.spacecatsmarket.exception.ProductNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,13 @@ public class InMemoryProductService implements ProductService {
 
     @Override
     public Product createProduct(Product product) {
+        boolean exists = idToProduct.values().stream()
+                .anyMatch(p -> p.getName().equalsIgnoreCase(product.getName()));
+
+        if (exists) {
+            throw new DuplicateProductNameException(product.getName());
+        }
+    
         long id = idSequence.getAndIncrement();
         Product toStore = Product.builder()
                 .id(id)
