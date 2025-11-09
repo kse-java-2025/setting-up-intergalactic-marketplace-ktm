@@ -6,11 +6,16 @@ import java.util.List;
 
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
 public class Cart {
     private Long id;
     private Long customerId;
     private List<Product> items;
     private Double totalAmount;
+    
+    public Cart(Long id, Long customerId, List<Product> items, Double totalAmount) {
+        this.id = id;
+        this.customerId = customerId;
+        this.items = items;
+        this.totalAmount = totalAmount;
+    }
 }
