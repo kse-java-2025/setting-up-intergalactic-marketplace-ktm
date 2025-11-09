@@ -3,9 +3,8 @@ package com.example.spacecatsmarket.service;
 import com.example.spacecatsmarket.domain.Product;
 import com.example.spacecatsmarket.exception.DuplicateProductNameException;
 import com.example.spacecatsmarket.exception.ProductNotFoundException;
-import com.example.spacecatsmarket.service.InMemoryProductService;
-
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -22,6 +21,7 @@ class InMemoryProductServiceTest {
     }
 
     @Test
+    @DisplayName("Create product successfully: all fields should be set and stored correctly")
     void createProduct_shouldAddNewProductSuccessfully_allFields() {
         Product product = Product.builder()
                 .name("Space Cat Toy")
@@ -37,11 +37,11 @@ class InMemoryProductServiceTest {
         assertEquals("A fun toy for cats", saved.getDescription());
         assertEquals(10.0, saved.getPrice());
         assertEquals(1L, saved.getCategoryId());
-        
+
         List<Product> allProducts = productService.findAllProducts();
         assertEquals(1, allProducts.size());
         Product stored = allProducts.get(0);
-        
+
         assertEquals(saved.getId(), stored.getId());
         assertEquals(saved.getName(), stored.getName());
         assertEquals(saved.getDescription(), stored.getDescription());
@@ -50,6 +50,7 @@ class InMemoryProductServiceTest {
     }
 
     @Test
+    @DisplayName("Creating a product with a duplicate name should throw DuplicateProductNameException")
     void createProduct_shouldThrowDuplicateProductNameException() {
         Product product1 = Product.builder()
                 .name("Space laser Pointer")
@@ -61,7 +62,7 @@ class InMemoryProductServiceTest {
         productService.createProduct(product1);
 
         Product duplicate = Product.builder()
-                .name("Space laser pointer") 
+                .name("Space laser pointer") // Case-insensitive duplicate
                 .description("Duplicate product name")
                 .price(6.0)
                 .categoryId(1L)
@@ -72,12 +73,14 @@ class InMemoryProductServiceTest {
     }
 
     @Test
+    @DisplayName("Finding a product by non-existent ID should throw ProductNotFoundException")
     void findProductById_shouldThrowProductNotFoundException() {
         assertThrows(ProductNotFoundException.class,
                 () -> productService.findProductById(999L));
     }
 
     @Test
+    @DisplayName("Update product successfully: all fields should be updated correctly")
     void updateProduct_shouldUpdateSuccessfully_allFields() {
         Product original = productService.createProduct(Product.builder()
                 .name("Food Pack")
