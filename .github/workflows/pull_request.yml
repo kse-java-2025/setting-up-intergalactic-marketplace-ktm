@@ -40,11 +40,13 @@ jobs:
 
       - name: Grant execute permission for Gradlew
         run: chmod +x ./gradlew
+        working-directory: spacecatsmarket
 
       # Run Gradle build and tests with coverage
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v3
         with:
+          build-root-directory: spacecatsmarket
           cache-disabled: true
           generate-job-summary: false
 
