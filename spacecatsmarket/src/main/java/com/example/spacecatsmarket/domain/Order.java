@@ -10,11 +10,11 @@ import java.util.List;
 public class Order {
     private Long id;
     private Long customerId;
-    private List<Product> products;
+    private List<OrderItem> products;
     private Double totalPrice;
     private LocalDateTime orderDate;
 
-    public Order(Long id, Long customerId, List<Product> products, Double totalPrice, LocalDateTime orderDate) {
+    public Order(Long id, Long customerId, List<OrderItem> products, Double totalPrice, LocalDateTime orderDate) {
         this.id = id;
         this.customerId = customerId;
         this.products = products;
