@@ -10,12 +10,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -33,31 +30,27 @@ public class ProductController {
     public ResponseEntity<ProductEntry> create(@Valid @RequestBody ProductDto productDto) {
         Product toCreate = productMapper.toEntity(productDto);
         Product created = productService.createProduct(toCreate);
-        ProductEntry body = toEntry(created.getId(), created);
+        ProductEntry body = productMapper.toEntry(created);
         return ResponseEntity.created(URI.create("/api/v1/products/" + created.getId())).body(body);
     }
 
     @GetMapping
     public ProductListDto getAll() {
-        List<ProductEntry> entries = productService.findAllProducts().stream()
-                .map(p -> toEntry(p.getId(), p))
-                .collect(Collectors.toList());
+        List<ProductEntry> entries = productMapper.toEntryList(productService.findAllProducts());
         return ProductListDto.builder().products(entries).build();
     }
 
     @GetMapping("/{id}")
     public ProductEntry getById(@PathVariable Long id) {
-        Product product = productService.findProductById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-        return toEntry(id, product);
+        Product product = productService.findProductById(id);
+        return productMapper.toEntry(product);
     }
 
     @PutMapping("/{id}")
     public ProductEntry update(@PathVariable Long id, @Valid @RequestBody ProductDto productDto) {
         Product toUpdate = productMapper.toEntity(productDto);
-        Product updated = productService.updateProduct(id, toUpdate)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
-        return toEntry(id, updated);
+        Product updated = productService.updateProduct(id, toUpdate);
+        return productMapper.toEntry(updated);
     }
 
     @DeleteMapping("/{id}")
@@ -66,20 +59,6 @@ public class ProductController {
         productService.deleteProduct(id);
     }
 
-    private ProductEntry toEntry(Long id, Product product) {
-        if (id == null) {
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Product id is missing");
-        }
-        return ProductEntry.builder()
-                .id(id)
-                .name(product.getName())
-                .description(product.getDescription())
-                .price(product.getPrice())
-                .categoryId(product.getCategoryId())
-                .build();
-    }
-
-    
 }
 
 
