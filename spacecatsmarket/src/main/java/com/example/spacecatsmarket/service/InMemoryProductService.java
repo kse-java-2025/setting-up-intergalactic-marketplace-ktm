@@ -36,7 +36,7 @@ public class InMemoryProductService implements ProductService {
                 .categoryId(product.getCategoryId())
                 .build();
         idToProduct.put(id, toStore);
-        return copy(toStore);
+        return toStore;
     }
 
     @Override
@@ -54,7 +54,7 @@ public class InMemoryProductService implements ProductService {
         if (product == null) {
             throw new ProductNotFoundException(id);
         }
-        return copy(product);
+        return product;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class InMemoryProductService implements ProductService {
                 .categoryId(product.getCategoryId())
                 .build();
         idToProduct.put(id, updated);
-        return copy(updated);
+        return updated;
     }
 
     @Override
