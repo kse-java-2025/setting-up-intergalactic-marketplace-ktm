@@ -46,4 +46,13 @@ public class GlobalExceptionHandler {
         pd.setProperty("instance", "/api/v1/products");
         return pd;
     }
+
+    @ExceptionHandler(FeatureNotAvailableException.class)
+    public ProblemDetail handleFeatureNotAvailable(FeatureNotAvailableException ex) {
+        ProblemDetail pd = ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, ex.getMessage());
+        pd.setTitle("Feature Not Available");
+        pd.setType(URI.create("https://spacecatsmarket.com/problems/feature-not-available"));
+        pd.setProperty("instance", "/api/v1");
+        return pd;
+    }
 }

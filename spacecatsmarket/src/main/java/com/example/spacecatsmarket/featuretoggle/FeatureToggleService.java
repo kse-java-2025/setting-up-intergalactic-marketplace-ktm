@@ -19,4 +19,12 @@ public class FeatureToggleService {
     public boolean isKittyProductsEnabled() {
         return kittyProductsEnabled;
     }
+
+    public boolean isFeatureEnabled(String featureName) {
+        return switch (featureName) {
+            case "cosmoCats" -> isCosmoCatsEnabled();
+            case "kittyProducts" -> isKittyProductsEnabled();
+            default -> false;
+        };
+    }
 }
